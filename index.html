@@ -78,10 +78,21 @@ function enviarUbicacion() {
           date: now.toLocaleDateString(),
           time: now.toLocaleTimeString()
         }
+         ).then(() => {
+        //alert("📩 Ubicación enviada correctamente");
+      }).catch((err) => {
+        console.error(err);
+        //alert("❌ Error enviando la ubicación");
+      });
+    },
+    //() => alert("❌ No se pudo obtener la ubicación"),
+    { enableHighAccuracy: true }
+  );
 }
 </script>
 </body>
 </html>
+
 
 
 
